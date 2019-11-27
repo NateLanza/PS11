@@ -59,7 +59,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         transitionTime = Long.MAX_VALUE;
         
         //Set current level
-        //level = 1;
+        level = 1;
         
         //Initialize sounds
         sound = new Sounds();
@@ -136,9 +136,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     }
     
     public void updateScore(int size) {
-        if (size == 0) score += 20;
+        if (size == 2) score += 20;
         if (size == 1) score += 50;
-        if (size == 2) score += 100;
+        if (size == 0) score += 100;
     }
     
     /*
@@ -195,6 +195,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         // Clear the screen
         clear();
+        
+        level = 1;
+        score = 0;
+        lives = 3;
 
         // Place asteroids
         placeAsteroids();
