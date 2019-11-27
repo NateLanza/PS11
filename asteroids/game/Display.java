@@ -29,15 +29,15 @@ public class Display extends JFrame
         
         // This panel shows the amount of lives left with ships
         JPanel livesPanel = new JPanel();
-        ImageIcon icon = new ImageIcon("/Users/admin 1/Desktop/NOAH.png");
-        ImageIcon scaledIcon = new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() / 12,
-                icon.getIconHeight() / 12, Image.SCALE_SMOOTH));
-        JLabel Icon = new JLabel(scaledIcon);
-        JLabel Icon2 = new JLabel(scaledIcon);
-        JLabel Icon3 = new JLabel(scaledIcon);
-        livesPanel.add(Icon);
-        livesPanel.add(Icon2);
-        livesPanel.add(Icon3);
+        //ImageIcon icon = new ImageIcon("/Users/admin 1/Desktop/NOAH.png");
+        //ImageIcon scaledIcon = new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() / 12,
+        //        icon.getIconHeight() / 12, Image.SCALE_SMOOTH));
+        //JLabel Icon = new JLabel(scaledIcon);
+        //JLabel Icon2 = new JLabel(scaledIcon);
+        //JLabel Icon3 = new JLabel(scaledIcon);
+        //livesPanel.add(Icon);
+        //livesPanel.add(Icon2);
+        //livesPanel.add(Icon3);
         
         // This panel shows the level int
         JPanel levelPanel = new JPanel();
