@@ -13,11 +13,21 @@ public class Display extends JFrame
     /** The area where the action takes place */
     private Screen screen;
 
+    JPanel scorePanel = new JPanel();
+    
+    JLabel scoreLabel;
+    
+    JLabel levelLabel;
+    
+    Controller controllerCopy;
+    
     /**
      * Lays out the game and creates the controller
      */
     public Display (Controller controller)
     {
+        controllerCopy = controller;
+        
         // Title at the top
         setTitle(TITLE);
 
@@ -41,17 +51,12 @@ public class Display extends JFrame
         
         // This panel shows the level int
         JPanel levelPanel = new JPanel();
-        JLabel levelLabel = new JLabel("1"/*Controller.level*/);
+        levelLabel = new JLabel(controllerCopy.getLevel() + "");
         levelLabel.setForeground(Color.white);
         levelLabel.setFont(new Font("TimesRoman", Font.PLAIN, 40));
         levelPanel.add(levelLabel);
         
-        // This panel shows the Score int
-        JPanel scorePanel = new JPanel();
-        JLabel scoreLabel = new JLabel("69420");
-        scoreLabel.setForeground(Color.white);
-        scoreLabel.setFont(new Font("TimesRoman", Font.PLAIN, 40));
-        scorePanel.add(scoreLabel);
+        makeScorePanel(controller);
 
         // This panel contains the screen to prevent the screen from being
         // resized
@@ -93,12 +98,25 @@ public class Display extends JFrame
         // Connect the controller to the start button
         startGame.addActionListener(controller);
     }
+    
+    /**
+     * creates score Panel
+     */
+    public void makeScorePanel(Controller controller){
+        // This panel shows the Score int
+        scoreLabel = new JLabel(controller.getScore() + "");
+        scoreLabel.setForeground(Color.white);
+        scoreLabel.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+        scorePanel.add(scoreLabel);
+    }
 
     /**
      * Called when it is time to update the screen display. This is what drives the animation.
      */
     public void refresh ()
     {
+        scoreLabel.setText(controllerCopy.getScore() + "");
+        levelLabel.setText(controllerCopy.getLevel() + "");
         screen.repaint();
     }
 

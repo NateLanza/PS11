@@ -144,6 +144,9 @@ public class Asteroid extends Participant implements ShipDestroyer
     {
         if (p instanceof AsteroidDestroyer)
         {
+            //Update score
+            controller.updateScore(this.getSize());
+            
             //Record current position
             double x = this.getX();
             double y = this.getY();
