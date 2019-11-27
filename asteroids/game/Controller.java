@@ -24,6 +24,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
     
+    private Sounds sound;
+    
     /**
      * The time at which a transition to a new stage of the game should be made. A transition is scheduled a few seconds
      * in the future to give the user time to see what has happened before doing something like going to a new level or
@@ -58,6 +60,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         
         //Set current level
         //level = 1;
+        
+        //Initialize sounds
+        sound = new Sounds();
         
         //Create an object for the key states
         keyStates = new KeyStates();
@@ -218,6 +223,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     public void shipDestroyed ()
     {
+        //Play sounds
+        sound.play("bangShip");
+        
         // Null out the ship
         ship = null;
 
@@ -234,8 +242,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * An asteroid has been destroyed
      */
-    public void asteroidDestroyed ()
+    public void asteroidDestroyed (int size)
     {
+        //Play the correct sound based on asteroid size
+        if (size == 0) sound.play("bangSmall");
+        else if (size == 1) sound.play("bangMedium");
+        else sound.play("bangLarge");
+        
         // If all the asteroids are gone, schedule a transition
         if (countAsteroids() == 0)
         {
@@ -263,6 +276,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (e.getSource() instanceof JButton)
         {
             initialScreen();
+            keyStates.offAll();
         }
 
         // Time to refresh the screen and deal with keyboard input
@@ -274,7 +288,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             //Perform ship actions if not already doing so
             if (ship != null) {
                 // Move the ship
-                if (keyStates.thrust()) ship.accelerate();
+                if (keyStates.thrust()) {
+                    ship.accelerate();
+                    sound.play("thrust");
+                }
                 if (!(keyStates.left() && keyStates.right())) {
                     if (keyStates.left()) ship.turnLeft();
                     if (keyStates.right()) ship.turnRight();
@@ -282,6 +299,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
                 
                 //Fire bullet
                 if (keyStates.fire() && Bullet.bulletCount <= BULLET_LIMIT) {
+                    sound.play("fire");
                     double rotation = ship.getRotation();
                     addParticipant(new Bullet(ship.getXNose(), ship.getYNose(), BULLET_SPEED, rotation));
                 }
@@ -379,6 +397,21 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             keyState.put(KeyEvent.VK_LEFT, false);
             keyState.put(KeyEvent.VK_RIGHT, false);
             keyState.put(KeyEvent.VK_SPACE, false);
+        }
+        
+        /**
+         * Turns all keys off
+         */
+        public void offAll () {
+            keyState.put(KeyEvent.VK_W, false);
+            keyState.put(KeyEvent.VK_A, false);
+            keyState.put(KeyEvent.VK_S, false);
+            keyState.put(KeyEvent.VK_D, false);
+            keyState.put(KeyEvent.VK_UP, false);
+            keyState.put(KeyEvent.VK_DOWN, false);
+            keyState.put(KeyEvent.VK_LEFT, false);
+            keyState.put(KeyEvent.VK_RIGHT, false);
+            keyState.put(KeyEvent.VK_SPACE, false); 
         }
         
         /**
