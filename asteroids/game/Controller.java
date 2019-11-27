@@ -59,7 +59,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         transitionTime = Long.MAX_VALUE;
         
         //Set current level
-        //level = 1;
+        level = 1;
         
         //Initialize sounds
         sound = new Sounds();
@@ -136,9 +136,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     }
     
     public void updateScore(int size) {
-        if (size == 0) score += 20;
+        if (size == 2) score += 20;
         if (size == 1) score += 50;
-        if (size == 2) score += 100;
+        if (size == 0) score += 100;
     }
     
     /*
@@ -173,7 +173,6 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             else j = 600;
             if(i % 4 == 0 || i % 4 == 1) k = 600;
             else k = 150;
-            System.out.println();
         addParticipant(new Asteroid((int)(Math.random()*4), 2, j, k, 3, this));
         }
     }
