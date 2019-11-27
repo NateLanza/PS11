@@ -173,7 +173,6 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             else j = 600;
             if(i % 4 == 0 || i % 4 == 1) k = 600;
             else k = 150;
-            System.out.println();
         addParticipant(new Asteroid((int)(Math.random()*4), 2, j, k, 3, this));
         }
     }
