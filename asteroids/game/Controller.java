@@ -32,10 +32,12 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     private long transitionTime;
 
     /** Number of lives left */
-    private int lives;
+    private int lives = 3;
 
     /** Current level */
-    private int level;
+    private int level = 1;
+    
+    private int score = 0;
 
     /** The game display */
     private Display display;
@@ -55,7 +57,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         transitionTime = Long.MAX_VALUE;
         
         //Set current level
-        level = 1;
+        //level = 1;
         
         //Create an object for the key states
         keyStates = new KeyStates();
@@ -79,6 +81,18 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         return pstate.iterator();
     }
 
+    /**
+     * creates next level
+     */
+    public void nextLevel() {
+        clear();
+        level++;
+        display.refresh();
+        placeShip();
+        placeAsteroids();
+        
+    }
+    
     /**
      * Returns the ship, or null if there isn't one
      */
@@ -110,6 +124,27 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     }
 
     /**
+     * @returns the score as an int
+     */
+    public int getScore() {
+        return score;
+    }
+    
+    public void updateScore(int size) {
+        if (size == 0) score += 20;
+        if (size == 1) score += 50;
+        if (size == 2) score += 100;
+    }
+    
+    /*
+     * returns the level
+     */
+    public int getLevel() {
+        return level;
+    }
+    
+    
+    /**
      * Place a new ship in the center of the screen. Remove any existing ship first.
      */
     private void placeShip ()
@@ -126,7 +161,16 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void placeAsteroids ()
     {
-        addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        int j;
+        int k;
+        for (int i = 0; i < level + 3; i++) {
+            if(i % 2 == 0) j = 150;
+            else j = 600;
+            if(i % 4 == 0 || i % 4 == 1) k = 600;
+            else k = 150;
+            System.out.println();
+        addParticipant(new Asteroid((int)(Math.random()*4), 2, j, k, 3, this));
+        }
     }
 
     /**
@@ -152,9 +196,6 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Place the ship
         placeShip();
-
-        // Reset statistics
-        lives = 1;
 
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
@@ -199,6 +240,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (countAsteroids() == 0)
         {
             scheduleTransition(END_DELAY);
+            nextLevel();
         }
     }
 

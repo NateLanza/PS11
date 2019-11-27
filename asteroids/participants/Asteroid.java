@@ -144,6 +144,8 @@ public class Asteroid extends Participant implements ShipDestroyer
     {
         if (p instanceof AsteroidDestroyer)
         {
+            controller.updateScore(this.getSize());
+            
             // Expire the asteroid
             Participant.expire(this);
 
