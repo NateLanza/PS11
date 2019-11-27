@@ -146,6 +146,15 @@ public class Ship extends Participant implements AsteroidDestroyer
     {
         if (p instanceof ShipDestroyer)
         {
+            //Create debris
+            controller.addParticipant(new Debris(getX(), getY(), true));
+            controller.addParticipant(new Debris(getX(), getY(), true));
+            controller.addParticipant(new Debris(getX(), getY(), true));
+            controller.addParticipant(new Debris(getX(), getY(), false));
+            controller.addParticipant(new Debris(getX(), getY(), false));
+            controller.addParticipant(new Debris(getX(), getY(), false));
+            controller.addParticipant(new Debris(getX(), getY(), false));
+            
             // Expire the ship from the game
             Participant.expire(this);
 
