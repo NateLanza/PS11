@@ -40,7 +40,7 @@ public class Display extends JFrame
          screen = new Screen(controller);
         
         // This panel shows the amount of lives left with ships
-        ImageIcon icon1 = new ImageIcon("/Users/admin 1/Desktop/NOAH.jpg");
+        ImageIcon icon1 = new ImageIcon("src/images/SHIP.jpg");
         ImageIcon scaledIcon = new ImageIcon(icon1.getImage().getScaledInstance(icon1.getIconWidth() / 3,
                 icon1.getIconHeight() / 2, Image.SCALE_SMOOTH));
         JLabel Icon1 = new JLabel(scaledIcon);
