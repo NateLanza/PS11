@@ -32,7 +32,7 @@ public class Sounds
     
     /**
      * Plays a sound, if the sound isn't already playing
-     * @param name: he name of a .wav file in /sounds/ (without extension)
+     * @param name: the name of a .wav file in /sounds/ (without extension)
      * Note: the .wav must be added to the sound list in the constructor
      * @throws IllegalArgumentException if the sound file is null
      */

@@ -27,6 +27,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
     
+    /** All needed sounds */
     private Sounds sound;
     
     /**
@@ -150,12 +151,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     }
     
     /*
-     * returns the level
+     * Returns the level
      */
     public int getLevel() {
         return level;
     }
     
+    /**
+     * Plays a sound
+     * @param name - name of sound to play
+     */
+    public void playSound(String name) {
+        sound.play(name);
+    }
     
     /**
      * Place a new ship in the center of the screen. Remove any existing ship first.
@@ -175,7 +183,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     public void placeAlienShip () 
     {
         //Return if level not yet high enough for aliens
-        if (level < 2) return;
+        if (level < ALIEN_LEVEL) return;
         
         //Return if alien already exists
         if (alien != null) return;
@@ -188,7 +196,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         
         //Decide size based on level
         boolean size;
-        if (level == 2) size = Alien.LARGE;
+        if (level == ALIEN_LEVEL) size = Alien.LARGE;
         else size = Alien.SMALL;
         
         //Create alien
