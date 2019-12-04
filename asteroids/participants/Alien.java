@@ -124,6 +124,8 @@ public class Alien extends Participant implements ShipDestroyer, AsteroidDestroy
     /** Fires a bullet */
     private void fire ()
     {
+        if (controller.getShip() == null) return;
+        
         double bulletDir;
         if (isLarge)
         {
@@ -133,7 +135,7 @@ public class Alien extends Participant implements ShipDestroyer, AsteroidDestroy
             // Add bullet
             controller.addParticipant(new AlienBullet(getX(), getY(), BULLET_SPEED, bulletDir));
         }
-        else if (controller.getShip() != null)
+        else
         {
             // Calculate bullet direction based on ship location, with some randomness
             double xDist = controller.getShip().getX() - getX();
@@ -144,6 +146,9 @@ public class Alien extends Participant implements ShipDestroyer, AsteroidDestroy
             // Add bullet
             controller.addParticipant(new AlienBullet(getX(), getY(), ALIEN_BULLET_SPEED, bulletDir));
         }
+        
+        // Play sound
+        controller.playSound("fire");
 
         new ParticipantCountdownTimer(this, FIRE, 500 + RANDOM.nextInt(1500));
     }

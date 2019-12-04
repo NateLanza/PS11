@@ -152,6 +152,11 @@ public class Constants
     public final static int ALIEN_BULLET_DURATION = 2000;
     
     /**
+     * Level at which big alien appears. Small alien appears 1 level past this
+     */
+    public final static int ALIEN_LEVEL = 2;
+    
+    /**
      * Maximum speed of large asteroid
      */
     public final static int MAXIMUM_LARGE_ASTEROID_SPEED = 3;
