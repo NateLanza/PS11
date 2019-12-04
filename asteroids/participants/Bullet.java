@@ -5,7 +5,6 @@ import static asteroids.game.Constants.*;
 import java.awt.Shape;
 import java.awt.geom.*;
 import asteroids.destroyers.*;
-import asteroids.game.Controller;
 import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
 
@@ -27,6 +26,17 @@ public class Bullet extends Participant implements AsteroidDestroyer
         this.setDirection(direction);
         bulletCount++;
         new ParticipantCountdownTimer(this, BULLET_DURATION);
+    }
+    
+    /**
+     * Create a new bullet with custom duration
+     */
+    public Bullet(double x, double y, double speed, double direction, int duration) {
+        outline = new Ellipse2D.Double(x, y, 2., 2.);
+        this.setSpeed(speed);
+        this.setDirection(direction);
+        bulletCount++;
+        new ParticipantCountdownTimer(this, duration);
     }
     
     /**
