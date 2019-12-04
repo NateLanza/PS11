@@ -3,11 +3,6 @@ package asteroids.game;
 import javax.swing.*;
 import static asteroids.game.Constants.*;
 import java.awt.*;
-import java.awt.geom.Path2D;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.geom.*;
 
 /**
  * Defines the top-level appearance of an Asteroids game.
@@ -27,10 +22,6 @@ public class Display extends JFrame
     Controller controllerCopy;
     
     JPanel livesPanel = new JPanel();
-
-    private Shape outline;
-    
-    Path2D.Double poly = new Path2D.Double();
     
     /**
      * Lays out the game and creates the controller
@@ -48,18 +39,10 @@ public class Display extends JFrame
         // The main playing area and the controller
          screen = new Screen(controller);
         
-        poly.moveTo(21, 0);
-        poly.lineTo(-21, 12);
-        poly.lineTo(-14, 10);
-        poly.lineTo(-14, -10);
-        poly.lineTo(-21, -12);
-        poly.closePath();
-        outline = poly;
-        
         // This panel shows the amount of lives left with ships
         ImageIcon icon1 = new ImageIcon("src/images/SHIP.jpg");
         ImageIcon scaledIcon = new ImageIcon(icon1.getImage().getScaledInstance(icon1.getIconWidth() / 3,
-                icon1.getIconHeight() / 2, Image.SCALE_SMOOTH));
+               icon1.getIconHeight() / 2, Image.SCALE_SMOOTH));
         JLabel Icon1 = new JLabel(scaledIcon);
         JLabel Icon2 = new JLabel(scaledIcon);
         Icon2.setOpaque(false);
@@ -68,26 +51,6 @@ public class Display extends JFrame
         livesPanel.add(Icon3);
         livesPanel.add(Icon2);
         livesPanel.add(Icon1);
-
-        JPanel livesPanel = new JPanel();
-        
-        //ImageIcon icon = new ImageIcon("/Users/admin 1/Desktop/NOAH.png");
-        //ImageIcon scaledIcon = new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() / 12,
-        //        icon.getIconHeight() / 12, Image.SCALE_SMOOTH));
-        ScorePanel Point1 = new ScorePanel();
-        ScorePanel Point2 = new ScorePanel();
-        ScorePanel Point3 = new ScorePanel();
-        Point1.setSize(100, 100);
-        Point2.setSize(100, 100);
-        Point3.setSize(100, 100);
-        //Point1.
-        
-        /*JLabel Icon = new JLabel(outline);
-        JLabel Icon2 = new JLabel(scaledIcon);*/
-        //JLabel Icon3 = new JLabel(scaledIcon);
-        livesPanel.add(Point1);
-        livesPanel.add(Point2);
-        livesPanel.add(Point3);
         
         // This panel shows the level int
         JPanel levelPanel = new JPanel();
@@ -112,7 +75,7 @@ public class Display extends JFrame
         
         levelPanel.setOpaque(false);
         scorePanel.setOpaque(false);
-        //livesPanel.setOpaque(false);
+        livesPanel.setOpaque(false);
 
         fullScreenPanel.add(levelPanel, new Integer(101));
         fullScreenPanel.add(scorePanel, new Integer(100));
@@ -167,18 +130,4 @@ public class Display extends JFrame
     {
         screen.setLegend(s);
     }
-    
-    private class ScorePanel extends JPanel {
-        int[] xPoints = {420, -21, -14, -14, -21};
-        int[] yPoints = {0, 12, 10, -10, -12};
-        
-        @Override
-        public void paintComponent(Graphics g) {
-            //g.fillPolygon(xPoints, yPoints, 5);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.fill(outline);
-        }
-        
-    }
-    
 }
