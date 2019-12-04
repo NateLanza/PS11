@@ -116,9 +116,40 @@ public class Constants
     public final static int[] ALIENSHIP_SCORE = { 1000, 200 };
     
     /**
-     * Delay after which an alien ship appears.
+     * Minimum delay after which an alien ship appears. Maximum is twice this
      */
     public final static int ALIEN_DELAY = 5000;
+    
+    /**
+     * Speed of large alien
+     */
+    public final static int ALIEN_SPEED = 5;
+    
+    /**
+     * Minimum time in ms between large alien direction changes. Max is twice this
+     * Small alien will use half this value as minimum and this value as maximum
+     */
+    public final static int ALIEN_TURN_DELAY = 1000;
+    
+    /**
+     * Speed modifier of small alien
+     */
+    public final static double ALIEN_SPEED_MODIFIER = 1.5;
+    
+    /**
+     * Maximum deflection from perfect aim of alien bullet (in degrees)
+     */
+    public final static int ALIEN_BULLET_DEFLECTION = 5;
+    
+    /**
+     * Speed of alien bullet
+     */
+    public final static int ALIEN_BULLET_SPEED = 15;
+    
+    /**
+     * Lifetime of alien bullet in ms
+     */
+    public final static int ALIEN_BULLET_DURATION = 2000;
     
     /**
      * Maximum speed of large asteroid

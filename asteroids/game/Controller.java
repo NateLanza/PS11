@@ -18,6 +18,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** The ship (if one is active) or null (otherwise) */
     private Ship ship;
     
+    /**The alien ship (if one is active) or null (otherwise) */
+    private Alien alien;
+    
     /** The state of all keys of interest */
     private KeyStates keyStates;
 
@@ -95,7 +98,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         display.refresh();
         placeShip();
         placeAsteroids();
-        
+        placeAlienShip();
     }
     
     /**
@@ -136,9 +139,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     }
     
     public void updateScore(int size) {
-        if (size == 2) score += 20;
-        if (size == 1) score += 50;
-        if (size == 0) score += 100;
+        score += ASTEROID_SCORE[size];
     }
     
     /*
@@ -159,6 +160,32 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
         addParticipant(ship);
         display.setLegend("");
+    }
+    
+    /**
+     * Places the alien ship
+     */
+    public void placeAlienShip () 
+    {
+        //Return if level not yet high enough for aliens
+        if (level < 2) return;
+        
+        //Return if alien already exists
+        if (alien != null) return;
+        
+        //Randomly decide whether to place on left or right side, set direction accordingly
+        boolean direction = RANDOM.nextBoolean();
+        int x;
+        if (direction) x = 0;
+        else x = SIZE;
+        
+        //Decide size based on level
+        boolean size;
+        if (level == 2) size = Alien.LARGE;
+        else size = Alien.SMALL;
+        
+        //Create alien
+        alien = new Alien(x, RANDOM.nextInt(SIZE), this, size, ALIEN_DELAY + RANDOM.nextInt(ALIEN_DELAY), direction);
     }
 
     /**
@@ -185,6 +212,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         pstate.clear();
         display.setLegend("");
         ship = null;
+        Participant.expire(alien);
+        alien = null;
     }
 
     /**
@@ -204,6 +233,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Place the ship
         placeShip();
+        
+        //Place alien ship (won't happen if level < 2)
+        placeAlienShip();
 
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
@@ -252,7 +284,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         else if (size == 1) sound.play("bangMedium");
         else sound.play("bangLarge");
         
-        // If all the asteroids are gone, schedule a transition
+        // If all the asteroids are gone schedule a transition
         if (countAsteroids() == 0)
         {
             scheduleTransition(END_DELAY);
@@ -260,6 +292,27 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
     }
 
+    
+    /**
+     * Alien ship has been destroyed
+     * @param isLarge - true for large alien ship, false for small
+     */
+    public void alienShipDestroyed (boolean isLarge) 
+    {
+        //Play destruction sound
+        sound.play("bangAlienShip");
+        
+        //Award pts based on size
+        if (isLarge)
+            score += ALIENSHIP_SCORE[1];
+        else
+            score += ALIENSHIP_SCORE[0];
+        
+        //Reset & create new alien
+        alien = null;
+        placeAlienShip();
+    }
+    
     /**
      * Schedules a transition m msecs in the future
      */
@@ -301,7 +354,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
                 }
                 
                 //Fire bullet
-                if (keyStates.fire() && Bullet.bulletCount <= BULLET_LIMIT) {
+                if (keyStates.fire() && Bullet.bulletCount < BULLET_LIMIT) {
                     sound.play("fire");
                     double rotation = ship.getRotation();
                     addParticipant(new Bullet(ship.getXNose(), ship.getYNose(), BULLET_SPEED, rotation));
@@ -310,6 +363,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
             // Move the participants to their new locations
             pstate.moveParticipants();
+            
+            //Play alien sound if on screen
+            if (alien != null)
+                if (alien.getSize() == 1)
+                    sound.play("saucerSmall");
+                else if (alien.getSize() == 2)
+                    sound.play("saucerBig");
 
             // Refresh screen
             display.refresh();
@@ -335,7 +395,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             }
         }
     }
-
+    
     /**
      * Returns the number of asteroids that are active participants
      */
