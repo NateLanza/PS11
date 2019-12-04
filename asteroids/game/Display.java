@@ -26,11 +26,11 @@ public class Display extends JFrame
     
     Controller controllerCopy;
     
+    JPanel livesPanel = new JPanel();
+
     private Shape outline;
     
     Path2D.Double poly = new Path2D.Double();
-
-    
     
     /**
      * Lays out the game and creates the controller
@@ -46,7 +46,7 @@ public class Display extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // The main playing area and the controller
-        screen = new Screen(controller);
+         screen = new Screen(controller);
         
         poly.moveTo(21, 0);
         poly.lineTo(-21, 12);
@@ -57,6 +57,18 @@ public class Display extends JFrame
         outline = poly;
         
         // This panel shows the amount of lives left with ships
+        ImageIcon icon1 = new ImageIcon("/Users/admin 1/Desktop/NOAH.jpg");
+        ImageIcon scaledIcon = new ImageIcon(icon1.getImage().getScaledInstance(icon1.getIconWidth() / 3,
+                icon1.getIconHeight() / 2, Image.SCALE_SMOOTH));
+        JLabel Icon1 = new JLabel(scaledIcon);
+        JLabel Icon2 = new JLabel(scaledIcon);
+        Icon2.setOpaque(false);
+        JLabel Icon3 = new JLabel(scaledIcon);
+        Icon1.setOpaque(true);
+        livesPanel.add(Icon3);
+        livesPanel.add(Icon2);
+        livesPanel.add(Icon1);
+
         JPanel livesPanel = new JPanel();
         
         //ImageIcon icon = new ImageIcon("/Users/admin 1/Desktop/NOAH.png");
@@ -69,8 +81,6 @@ public class Display extends JFrame
         Point2.setSize(100, 100);
         Point3.setSize(100, 100);
         //Point1.
-        
-        
         
         /*JLabel Icon = new JLabel(outline);
         JLabel Icon2 = new JLabel(scaledIcon);*/
@@ -85,7 +95,6 @@ public class Display extends JFrame
         levelLabel.setForeground(Color.white);
         levelLabel.setFont(new Font("TimesRoman", Font.PLAIN, 40));
         levelPanel.add(levelLabel);
-        
         makeScorePanel(controller);
 
         // This panel contains the screen to prevent the screen from being
@@ -99,7 +108,7 @@ public class Display extends JFrame
         levelPanel.setSize(1450, 50);
         scorePanel.setSize(150, 50);
         screenPanel.setSize(750, 750);
-        livesPanel.setBounds(0, 50, 200, 50);
+        livesPanel.setBounds(0, 50, 200, 500);
         
         levelPanel.setOpaque(false);
         scorePanel.setOpaque(false);
@@ -145,8 +154,9 @@ public class Display extends JFrame
      */
     public void refresh ()
     {
-        scoreLabel.setText(controllerCopy.getScore() + "");
+        livesPanel.setLocation(-40-((3 - controllerCopy.getLives()) * 40), 50);
         levelLabel.setText(controllerCopy.getLevel() + "");
+        scoreLabel.setText(controllerCopy.getScore() + "");
         screen.repaint();
     }
 

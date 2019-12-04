@@ -138,6 +138,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         return score;
     }
     
+    /**
+     * @returns the amount of lives as an int
+     */
+    public int getLives() {
+        return lives;
+    }
+    
     public void updateScore(int size) {
         score += ASTEROID_SCORE[size];
     }
@@ -221,6 +228,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void initialScreen ()
     {
+        score = 0;
+        lives = 3;
+        level = 1;
+        
         // Clear the screen
         clear();
         
@@ -271,7 +282,15 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         lives--;
 
         // Since the ship was destroyed, schedule a transition
+        if (lives < 1) {
         scheduleTransition(END_DELAY);
+        display.setLegend("Game Over");
+        }
+        
+        if (lives > 0) {
+        scheduleTransition(END_DELAY);
+        placeShip ();
+        }
     }
 
     /**
