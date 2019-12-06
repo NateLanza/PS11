@@ -17,19 +17,24 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     /** The ship (if one is active) or null (otherwise) */
     private Ship ship;
-    
-    /**The alien ship (if one is active) or null (otherwise) */
+
+    /** The alien ship (if one is active) or null (otherwise) */
     private Alien alien;
-    
+
     /** The state of all keys of interest */
     private KeyStates keyStates;
 
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
-    
+
     /** All needed sounds */
     private Sounds sound;
-    
+
+    /** Music variables */
+    private String currentBeat;
+    private int elapsedMS;
+    private int nextBeat;
+
     /**
      * The time at which a transition to a new stage of the game should be made. A transition is scheduled a few seconds
      * in the future to give the user time to see what has happened before doing something like going to a new level or
@@ -42,7 +47,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     /** Current level */
     private int level = 1;
-    
+
     private int score = 0;
 
     /** The game display */
@@ -55,22 +60,22 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         // Initialize the ParticipantState
         pstate = new ParticipantState();
-        
+
         // Set up the refresh timer.
         refreshTimer = new Timer(FRAME_INTERVAL, this);
 
         // Clear the transitionTime
         transitionTime = Long.MAX_VALUE;
-        
-        //Set current level
+
+        // Set current level
         level = 1;
-        
-        //Initialize sounds
+
+        // Initialize sounds
         sound = new Sounds();
-        
-        //Create an object for the key states
+
+        // Create an object for the key states
         keyStates = new KeyStates();
-        
+
         // Record the display object
         display = new Display(this);
 
@@ -78,6 +83,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         splashScreen();
         display.setVisible(true);
         refreshTimer.start();
+
+        // Make music variables
+        currentBeat = "beat1";
+        elapsedMS = 0;
+        nextBeat = INITIAL_BEAT;
     }
 
     /**
@@ -93,15 +103,34 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * creates next level
      */
-    public void nextLevel() {
+    public void nextLevel ()
+    {
         clear();
         level++;
         display.refresh();
         placeShip();
         placeAsteroids();
         placeAlienShip();
+        elapsedMS = 0;
+        nextBeat = INITIAL_BEAT;
+        Bullet.bulletCount = 0;
     }
-    
+
+    /**
+     * Makes beats sound
+     */
+    private void beat ()
+    {
+        sound.play(currentBeat);
+        
+        nextBeat += INITIAL_BEAT;
+        
+        if (currentBeat.equals("beat1"))
+            currentBeat = "beat2";
+        else
+            currentBeat = "beat1";
+    }
+
     /**
      * Returns the ship, or null if there isn't one
      */
@@ -135,36 +164,42 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * @returns the score as an int
      */
-    public int getScore() {
+    public int getScore ()
+    {
         return score;
     }
-    
+
     /**
      * @returns the amount of lives as an int
      */
-    public int getLives() {
+    public int getLives ()
+    {
         return lives;
     }
-    
-    public void updateScore(int size) {
+
+    public void updateScore (int size)
+    {
         score += ASTEROID_SCORE[size];
     }
-    
+
     /*
      * Returns the level
      */
-    public int getLevel() {
+    public int getLevel ()
+    {
         return level;
     }
-    
+
     /**
      * Plays a sound
+     * 
      * @param name - name of sound to play
      */
-    public void playSound(String name) {
+    public void playSound (String name)
+    {
         sound.play(name);
     }
-    
+
     /**
      * Place a new ship in the center of the screen. Remove any existing ship first.
      */
@@ -176,30 +211,36 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         addParticipant(ship);
         display.setLegend("");
     }
-    
+
     /**
      * Places the alien ship
      */
-    public void placeAlienShip () 
+    public void placeAlienShip ()
     {
-        //Return if level not yet high enough for aliens
-        if (level < ALIEN_LEVEL) return;
-        
-        //Return if alien already exists
-        if (alien != null) return;
-        
-        //Randomly decide whether to place on left or right side, set direction accordingly
+        // Return if level not yet high enough for aliens
+        if (level < ALIEN_LEVEL)
+            return;
+
+        // Return if alien already exists
+        if (alien != null)
+            return;
+
+        // Randomly decide whether to place on left or right side, set direction accordingly
         boolean direction = RANDOM.nextBoolean();
         int x;
-        if (direction) x = 0;
-        else x = SIZE;
-        
-        //Decide size based on level
+        if (direction)
+            x = 0;
+        else
+            x = SIZE;
+
+        // Decide size based on level
         boolean size;
-        if (level == ALIEN_LEVEL) size = Alien.LARGE;
-        else size = Alien.SMALL;
-        
-        //Create alien
+        if (level == ALIEN_LEVEL)
+            size = Alien.LARGE;
+        else
+            size = Alien.SMALL;
+
+        // Create alien
         alien = new Alien(x, RANDOM.nextInt(SIZE), this, size, ALIEN_DELAY + RANDOM.nextInt(ALIEN_DELAY), direction);
     }
 
@@ -210,12 +251,17 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         int j;
         int k;
-        for (int i = 0; i < level + 3; i++) {
-            if(i % 2 == 0) j = 150;
-            else j = 600;
-            if(i % 4 == 0 || i % 4 == 1) k = 600;
-            else k = 150;
-        addParticipant(new Asteroid((int)(Math.random()*4), 2, j, k, 3, this));
+        for (int i = 0; i < level + 3; i++)
+        {
+            if (i % 2 == 0)
+                j = 150;
+            else
+                j = 600;
+            if (i % 4 == 0 || i % 4 == 1)
+                k = 600;
+            else
+                k = 150;
+            addParticipant(new Asteroid((int) (Math.random() * 4), 2, j, k, 3, this));
         }
     }
 
@@ -239,10 +285,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         score = 0;
         lives = 3;
         level = 1;
-        
+
         // Clear the screen
         clear();
-        
+
         level = 1;
         score = 0;
         lives = 3;
@@ -252,8 +298,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Place the ship
         placeShip();
-        
-        //Place alien ship (won't happen if level < 2)
+
+        // Place alien ship (won't happen if level < 2)
         placeAlienShip();
 
         // Start listening to events (but don't listen twice)
@@ -277,9 +323,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     public void shipDestroyed ()
     {
-        //Play sounds
+        // Play sounds
         sound.play("bangShip");
-        
+
         // Null out the ship
         ship = null;
 
@@ -290,14 +336,16 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         lives--;
 
         // Since the ship was destroyed, schedule a transition
-        if (lives < 1) {
-        scheduleTransition(END_DELAY);
-        display.setLegend("Game Over");
+        if (lives < 1)
+        {
+            scheduleTransition(END_DELAY);
+            display.setLegend("Game Over");
         }
-        
-        if (lives > 0) {
-        scheduleTransition(END_DELAY);
-        placeShip ();
+
+        if (lives > 0)
+        {
+            scheduleTransition(END_DELAY);
+            placeShip();
         }
     }
 
@@ -306,11 +354,14 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     public void asteroidDestroyed (int size)
     {
-        //Play the correct sound based on asteroid size
-        if (size == 0) sound.play("bangSmall");
-        else if (size == 1) sound.play("bangMedium");
-        else sound.play("bangLarge");
-        
+        // Play the correct sound based on asteroid size
+        if (size == 0)
+            sound.play("bangSmall");
+        else if (size == 1)
+            sound.play("bangMedium");
+        else
+            sound.play("bangLarge");
+
         // If all the asteroids are gone schedule a transition
         if (countAsteroids() == 0)
         {
@@ -319,27 +370,27 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
     }
 
-    
     /**
      * Alien ship has been destroyed
+     * 
      * @param isLarge - true for large alien ship, false for small
      */
-    public void alienShipDestroyed (boolean isLarge) 
+    public void alienShipDestroyed (boolean isLarge)
     {
-        //Play destruction sound
+        // Play destruction sound
         sound.play("bangAlienShip");
-        
-        //Award pts based on size
+
+        // Award pts based on size
         if (isLarge)
             score += ALIENSHIP_SCORE[1];
         else
             score += ALIENSHIP_SCORE[0];
-        
-        //Reset & create new alien
+
+        // Reset & create new alien
         alien = null;
         placeAlienShip();
     }
-    
+
     /**
      * Schedules a transition m msecs in the future
      */
@@ -367,31 +418,42 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         {
             // It may be time to make a game transition
             performTransition();
-            
-            //Perform ship actions if not already doing so
-            if (ship != null) {
+
+            // Perform ship actions if not already doing so
+            if (ship != null)
+            {
                 // Move the ship
-                if (keyStates.thrust()) {
+                if (keyStates.thrust())
+                {
                     ship.accelerate();
                     sound.play("thrust");
                 }
-                if (!(keyStates.left() && keyStates.right())) {
-                    if (keyStates.left()) ship.turnLeft();
-                    if (keyStates.right()) ship.turnRight();
+                if (!(keyStates.left() && keyStates.right()))
+                {
+                    if (keyStates.left())
+                        ship.turnLeft();
+                    if (keyStates.right())
+                        ship.turnRight();
                 }
-                
-                //Fire bullet
-                if (keyStates.fire() && Bullet.bulletCount < BULLET_LIMIT) {
+
+                // Fire bullet
+                if (keyStates.fire() && Bullet.bulletCount < BULLET_LIMIT)
+                {
                     sound.play("fire");
                     double rotation = ship.getRotation();
                     addParticipant(new Bullet(ship.getXNose(), ship.getYNose(), BULLET_SPEED, rotation));
                 }
+                                
+                // Do sound
+                elapsedMS += 33;
+                if (elapsedMS >= nextBeat)
+                    beat();
             }
 
             // Move the participants to their new locations
             pstate.moveParticipants();
-            
-            //Play alien sound if on screen
+
+            // Play alien sound if on screen
             if (alien != null)
                 if (alien.getSize() == 1)
                     sound.play("saucerSmall");
@@ -422,7 +484,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             }
         }
     }
-    
+
     /**
      * Returns the number of asteroids that are active participants
      */
@@ -445,7 +507,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyPressed (KeyEvent e)
     {
-        if (ship == null) return;
+        if (ship == null)
+            return;
         keyStates.on(e.getKeyCode());
     }
 
@@ -453,30 +516,34 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     public void keyTyped (KeyEvent e)
     {
     }
-    
+
     /**
      * If a key of interest is released, record that it is up.
      */
     @Override
     public void keyReleased (KeyEvent e)
     {
-        if (ship == null) return;
+        if (ship == null)
+            return;
         keyStates.off(e.getKeyCode());
-        
-        //Turn off ship flame if necessary
-        if (!keyStates.thrust()) ship.flameOff();
+
+        // Turn off ship flame if necessary
+        if (!keyStates.thrust())
+            ship.flameOff();
     }
-    
+
     /**
      * Represents the state of all relevant keys and returns values for the controller
      */
-    private class KeyStates {
-        
+    private class KeyStates
+    {
+
         /** Represents the state of all relevant keys */
         private TreeMap<Integer, Boolean> keyState;
-        
-        public KeyStates () {
-            //Initialize all keys to false (not pressed)
+
+        public KeyStates ()
+        {
+            // Initialize all keys to false (not pressed)
             keyState = new TreeMap<Integer, Boolean>();
             keyState.put(KeyEvent.VK_W, false);
             keyState.put(KeyEvent.VK_A, false);
@@ -488,11 +555,12 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             keyState.put(KeyEvent.VK_RIGHT, false);
             keyState.put(KeyEvent.VK_SPACE, false);
         }
-        
+
         /**
          * Turns all keys off
          */
-        public void offAll () {
+        public void offAll ()
+        {
             keyState.put(KeyEvent.VK_W, false);
             keyState.put(KeyEvent.VK_A, false);
             keyState.put(KeyEvent.VK_S, false);
@@ -501,51 +569,57 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             keyState.put(KeyEvent.VK_DOWN, false);
             keyState.put(KeyEvent.VK_LEFT, false);
             keyState.put(KeyEvent.VK_RIGHT, false);
-            keyState.put(KeyEvent.VK_SPACE, false); 
+            keyState.put(KeyEvent.VK_SPACE, false);
         }
-        
+
         /**
-         * Turns a key off 
+         * Turns a key off
          */
-        public void off (int key) {
+        public void off (int key)
+        {
             keyState.put(key, false);
         }
-        
+
         /**
          * Turns a key on
          */
-        public void on (int key) {
+        public void on (int key)
+        {
             keyState.put(key, true);
         }
-        
+
         /**
          * @return Whether a thrust key is on
          */
-        public boolean thrust () {
+        public boolean thrust ()
+        {
             return keyState.get(KeyEvent.VK_W) || keyState.get(KeyEvent.VK_UP);
         }
-        
+
         /**
          * @return Whether a fire key is on
          */
-        public boolean fire () {
+        public boolean fire ()
+        {
             return keyState.get(KeyEvent.VK_S) || keyState.get(KeyEvent.VK_DOWN) || keyState.get(KeyEvent.VK_SPACE);
         }
-        
+
         /**
          * @return Whether a turn left key is on
          */
-        public boolean left () {
+        public boolean left ()
+        {
             return keyState.get(KeyEvent.VK_A) || keyState.get(KeyEvent.VK_LEFT);
         }
-        
+
         /**
          * @return Whether a turn right key is on
          */
-        public boolean right () {
+        public boolean right ()
+        {
             return keyState.get(KeyEvent.VK_D) || keyState.get(KeyEvent.VK_RIGHT);
         }
-        
+
     }
-    
+
 }

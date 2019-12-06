@@ -93,7 +93,7 @@ public class Constants
     /**
      * Maximum number of bullets that can exist at one time.
      */
-    public final static int BULLET_LIMIT = 8;
+    public final static int BULLET_LIMIT = 8000;
 
     /**
      * Scaling factors used for asteroids of size 0, 1, and 2.

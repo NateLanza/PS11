@@ -28,6 +28,8 @@ public class Sounds
         addClip("saucerBig");
         addClip("saucerSmall");
         addClip("thrust");
+        addClip("beat1");
+        addClip("beat2");
     }
     
     /**
